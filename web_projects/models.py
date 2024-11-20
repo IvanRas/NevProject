@@ -36,23 +36,9 @@ class Newsletter(models.Model):
     # Сообщение (внешний ключ на модель «Сообщение»).
     # Получатели («многие ко многим», связь с моделью «Получатель»).
 
-    def __str__(self):
-        return f'{self.topic}'
-
-    class Meta:
-        verbose_name = 'письмо'
-        verbose_name_plural = 'письма'
-
 
 class Mailing(models.Model):
     created_at = models.DateTimeField(verbose_name='дата создания')
     status = models.TextField(max_length=250, verbose_name='статус')
     # Ответ почтового сервера (текст).
     # Рассылка (внешний ключ на модель «Рассылка»).
-
-    def __str__(self):
-        return f'{self.topic}'
-
-    class Meta:
-        verbose_name = 'письмо'
-        verbose_name_plural = 'письма'
