@@ -18,15 +18,17 @@ from operator import index
 
 from django.urls import path
 
-#from catalog.apps import CatalogConfig
-#from catalog.views import ProductDetailView, CatalogContactsView, HomeListView
-#
-# app_name = CatalogConfig.name
-#
-#
-# urlpatterns = [
-#     path('', HomeListView.as_view(), name="home"),
-#     path('contacts/', CatalogContactsView.as_view(), name='contacts'),
-#     path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail')
-#
-# ]
+from web_projects.apps import WebProjectsConfig
+from web_projects.views import UserCreateView, UserDetailView, HomeListView, UserUpdateView, UserDeleteView, UserListView
+
+app_name = WebProjectsConfig.name
+
+
+urlpatterns = [
+    path('', HomeListView.as_view(), name="user"),
+    path('user/<int:pk>/', UserDetailView.as_view(), name='user_detail'),
+    path('user/', UserListView.as_view(), name='user'),
+    path('create_user/', UserCreateView.as_view(), name='create_user'),
+    path('user/<int:pk>/update/', UserUpdateView.as_view(), name='user_update'),
+    path('user/<int:pk>/delete/', UserDeleteView.as_view(), name='user_delete')
+]

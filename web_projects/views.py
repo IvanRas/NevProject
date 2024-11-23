@@ -6,47 +6,57 @@ from django.views.generic import DetailView, ListView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
 
 
-from web_projects.models import NewsLetter, Message, Message, Mailing
+from web_projects.models import Mailing, User, Message, Mailing
 
 # Create your views here.
 
 
-class NewsLetterCreateView(CreateView):
-    model = NewsLetter
-    fields = ['created_at', 'updated_at', 'status', 'receiver', 'recipients']
-    template_name = 'web_projects/blog_form.html'
+class UserListView(ListView):
+    model = User
+    template_name = 'user/home.html'
+    context_object_name = 'users'
+
+    def get_queryset(self):
+        return User.objects.filter(publication_sign=True)
+
+
+class UserCreateView(CreateView):
+    model = User
+    fields = ['last_name', 'email', 'comment']
+    template_name = 'web_projects/user_form.html'
     success_url = reverse_lazy('web_projects:home')
 
 
-class NewsLetterDetailView(DetailView):
-    model = NewsLetter
-    template_name = 'web_projects/blog.html'
-    context_object_name = 'newsletter'
+class UserDetailView(DetailView):
+    model = User
+    template_name = 'web_projects/user.html'
+    context_object_name = 'user'
+
+    # def get_object(self, queryset=None):
+    #     self.object = super().get_object(queryset)
+    #     self.object.count_of_views += 1
+    #     self.object.save()
+    #     return self.object
 
 
-class NewsLetterUpdateView(UpdateView):
-    model = NewsLetter
-    fields = ['status', 'receiver', 'recipients']
-    template_name = 'blog/blog_form.html'
+class UserUpdateView(UpdateView):
+    model = User
+    fields = ['last_name', 'comment']
+    template_name = 'web_projects/user_form.html'
     success_url = reverse_lazy('web_projects:home')
 
     def get_success_url(self):
-        return reverse('blog:blog_detail', args=[self.kwargs.get('pk')])
+        return reverse('user:user_detail', args=[self.kwargs.get('pk')])
 
 
-
-class NewsLetterDeleteView(DeleteView):
-    model = NewsLetter
-    template_name = 'blog/blog_delete.html'
-    success_url = reverse_lazy('web_projects:home')
-
-
-class Null():
-    success_url = reverse_lazy('web_projects:home')
+class UserDeleteView(DeleteView):
+    model = User
+    template_name = 'web_projects/user_delete.html'
+    success_url = reverse_lazy('blog:home')
 
 
 class HomeListView(ListView):
-    model = NewsLetter
+    model = User
     template_name = 'web_projects/base.html'
     context_object_name = 'products'
 
@@ -62,7 +72,7 @@ def contacts(request):
     return render(request, 'contacts.html')
 
 
-class CatalogContactsView(View):
+class WebProjectsContactsView(View):
     def get(self, request):
         return render(request, 'web_projects/contacts.html')
 
@@ -74,8 +84,3 @@ class CatalogContactsView(View):
         # Здесь мы просто возвращаем простой ответ
         return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
 
-
-class ProductDetailView(DetailView):
-    model = NewsLetter
-    template_name = 'web_projects/product_detail.html'
-    context_object_name = 'newsletter'

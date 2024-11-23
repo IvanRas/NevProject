@@ -1,0 +1,15 @@
+{% extends 'web_projects/base.html'%}
+{% load my_tags %}
+{% block content %}
+<div class="card mb-3">
+  <img src="{{ web_projects.image| media_filter }}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{ user.last_name }}</h5>
+    <p class="card-text"> {{ user.email }}</p>
+    <p class="card-text"> {{ user.comment }}</p>
+    <p class="card-text"><small class="text-muted">{{user.created_at}}</small></p>
+      <a href="{% url 'web_projects:user_update' blog.id %}" class="btn btn-primary">редактировать</a>
+      <a href="{% url 'web_projects:user_delete' blog.id %}" class="btn btn-danger">удалить</a>
+  </div>
+</div>
+{% endblock %}
