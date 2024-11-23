@@ -6,53 +6,97 @@ from django.views.generic import DetailView, ListView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
 
 
-from web_projects.models import Mailing, User, Message, Mailing
+from web_projects.models import NewsLetter, User, Message, Mailing
 
 # Create your views here.
+
+# CRUD для получателей (Recipient)
 
 
 class UserListView(ListView):
     model = User
-    template_name = 'user/home.html'
+    template_name = 'user_list.html'
     context_object_name = 'users'
-
-    def get_queryset(self):
-        return User.objects.filter(publication_sign=True)
 
 
 class UserCreateView(CreateView):
     model = User
     fields = ['last_name', 'email', 'comment']
-    template_name = 'web_projects/user_form.html'
-    success_url = reverse_lazy('web_projects:home')
-
-
-class UserDetailView(DetailView):
-    model = User
-    template_name = 'web_projects/user.html'
-    context_object_name = 'user'
-
-    # def get_object(self, queryset=None):
-    #     self.object = super().get_object(queryset)
-    #     self.object.count_of_views += 1
-    #     self.object.save()
-    #     return self.object
+    template_name = 'user_form.html'
+    success_url = reverse_lazy('user_list')
 
 
 class UserUpdateView(UpdateView):
     model = User
     fields = ['last_name', 'comment']
-    template_name = 'web_projects/user_form.html'
-    success_url = reverse_lazy('web_projects:home')
-
-    def get_success_url(self):
-        return reverse('user:user_detail', args=[self.kwargs.get('pk')])
+    template_name = 'user_form.html'
+    success_url = reverse_lazy('user_list')
 
 
 class UserDeleteView(DeleteView):
     model = User
-    template_name = 'web_projects/user_delete.html'
-    success_url = reverse_lazy('blog:home')
+    template_name = 'user_delete.html'
+    success_url = reverse_lazy('user_list')
+
+
+# CRUD для сообщений (Message)
+
+
+class MessageListView(ListView):
+    model = Message
+    template_name = 'message_list.html'
+    context_object_name = 'messages'
+
+
+class MessageCreateView(CreateView):
+    model = Message
+    fields = ['topic', 'letter']
+    template_name = 'message_form.html'
+    success_url = reverse_lazy('message_list')
+
+
+class MessageUpdateView(UpdateView):
+    model = Message
+    fields = ['topic', 'letter']
+    template_name = 'message_form.html'
+    success_url = reverse_lazy('message_list')
+
+
+class MessageDeleteView(DeleteView):
+    model = Message
+    template_name = 'message_delete.html'
+    success_url = reverse_lazy('message_list')
+
+# CRUD для рассылок (Mailing)
+
+
+class NewsLetterListView(ListView):
+    model = NewsLetter
+    template_name = 'newsletter_list.html'
+    context_object_name = 'newsletters'
+
+
+class NewsLetterCreateView(CreateView):
+    model = NewsLetter
+    fields = ['end_at', 'message', 'recipients']
+    template_name = 'newsletter_form.html'
+    success_url = reverse_lazy('newsletter_list')
+
+
+class NewsLetterUpdateView(UpdateView):
+    model = NewsLetter
+    fields = ['end_at', 'message', 'recipients']
+    template_name = 'newsletter_form.html'
+    success_url = reverse_lazy('newsletter_list')
+
+
+class NewsLetterDeleteView(DeleteView):
+    model = NewsLetter
+    template_name = 'newsletter_delete.html'
+    success_url = reverse_lazy('newsletter_list')
+
+
+
 
 
 class HomeListView(ListView):

@@ -9,7 +9,7 @@ class User(models.Model):
     comment = models.TextField(max_length=250, verbose_name='комментарий', help_text='Введите комментарий')
 
     def __str__(self):
-        return f'{self.last_name}'
+        return f'{self.email}'
 
     class Meta:
         verbose_name = 'получатель'

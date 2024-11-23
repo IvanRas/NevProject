@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Recipient
+from .models import User
 
 # Register your models here.
 
 
-@admin.register(Recipient)
+@admin.register(User)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'email', 'comment')
     list_filter = ('last_name',)
