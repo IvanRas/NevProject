@@ -19,7 +19,7 @@ from operator import index
 from django.urls import path
 
 from web_projects.apps import WebProjectsConfig
-from web_projects.views import (UserCreateView, HomeListView, UserUpdateView, UserDeleteView, UserListView,
+from web_projects.views import (UserCreateView, HomeView, UserUpdateView, UserDeleteView, UserListView, SendMailingView,
                                 NewsLetterUpdateView, NewsLetterCreateView, NewsLetterDeleteView, NewsLetterListView,
                                 MessageUpdateView, MessageDeleteView, MessageListView, MessageCreateView)
 
@@ -27,7 +27,7 @@ app_name = WebProjectsConfig.name
 
 
 urlpatterns = [
-    path('', HomeListView.as_view(), name="home"),
+    path('', HomeView.as_view(), name="home"),
 
     path('user/', UserListView.as_view(), name='user_list'),
     path('user/create/', UserCreateView.as_view(), name='user_create'),
@@ -43,4 +43,7 @@ urlpatterns = [
     path('newsletter/create/', NewsLetterCreateView.as_view(), name='newsletter_create'),
     path('newsletter/update/<int:pk>/', NewsLetterUpdateView.as_view(), name='newsletter_update'),
     path('newsletter/delete/<int:pk>/', NewsLetterDeleteView.as_view(), name='newsletter_delete'),
+
+    path('send-mailing/<int:mailing_id>/', SendMailingView.as_view(), name='send_mailing'),
+
 ]

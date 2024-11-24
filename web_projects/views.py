@@ -1,9 +1,11 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.views import View
-from django.urls import reverse_lazy, reverse
-from django.views.generic import DetailView, ListView, DeleteView
+from django.urls import reverse_lazy
+from django.views.generic.base import TemplateView
+from django.views.generic import ListView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
+from django.core.mail import send_mail
+from django.utils import timezone
 
 
 from web_projects.models import NewsLetter, User, Message, Mailing
@@ -95,36 +97,57 @@ class NewsLetterDeleteView(DeleteView):
     template_name = 'newsletter_delete.html'
     success_url = reverse_lazy('newsletter_list')
 
+# Генерация отчета и отправка рассылки
 
 
+class SendMailingView(View):
+    def post(self, request, mailing_id):
+        mailing = self.get_object(mailing_id)
+        recipients = mailing.recipients.all()
+
+        # Инициация отправки
+        for recipient in recipients:
+            try:
+                send_mail(
+                    mailing.message.subject,
+                    mailing.message.body,
+                    'from@example.com',  # email from
+                    [recipient.email],
+                    fail_silently=False,
+                )
+                status = 'Успешно'
+                server_response = 'Письмо отправлено успешно.'
+            except Exception as e:
+                status = 'Не успешно'
+                server_response = str(e)
+
+            # Сохранение попытки рассылки
+            NewsLetter.objects.create(
+                mailing=mailing,
+                status=status,
+                server_response=server_response
+            )
+
+        # Обновление статуса рассылки
+        if mailing.status == 'Создана':
+            mailing.status = 'Запущена'
+            mailing.first_sent_at = timezone.now()
+            mailing.save()
+
+        return render(request, 'mailing_status.html', {'mailing': mailing})
+
+    def get_object(self, mailing_id):
+        return Mailing.objects.get(id=mailing_id)
 
 
-class HomeListView(ListView):
-    model = User
-    template_name = 'web_projects/base.html'
-    context_object_name = 'products'
+# Главная страница
 
+class HomeView(TemplateView):
+    template_name = 'home.html'
 
-def contacts(request):
-    if request.method == 'POST':
-        # Получение данных из формы
-        name = request.POST.get('name')
-        message = request.POST.get('message')
-        # Обработка данных (например, сохранение в БД, отправка email и т. д.)
-        # Здесь мы просто возвращаем простой ответ
-        return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
-    return render(request, 'contacts.html')
-
-
-class WebProjectsContactsView(View):
-    def get(self, request):
-        return render(request, 'web_projects/contacts.html')
-
-    def post(self, request):
-        #Получение данных из формы
-        name = request.POST.get('name')
-        message = request.POST.get('message')
-        # Обработка данных (например, сохранение в БД, отправка email и т. д.)
-        # Здесь мы просто возвращаем простой ответ
-        return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_mailings'] = NewsLetter.objects.count()
+        context['active_mailings'] = NewsLetter.objects.filter(status='Запущена').count()
+        context['unique_recipients'] = User.objects.count()
+        return context
