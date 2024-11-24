@@ -137,7 +137,7 @@ class SendMailingView(View):
         return render(request, 'mailing_status.html', {'mailing': mailing})
 
     def get_object(self, mailing_id):
-        return Mailing.objects.get(id=mailing_id)
+        return NewsLetter.objects.get(id=mailing_id)
 
 
 # Главная страница
