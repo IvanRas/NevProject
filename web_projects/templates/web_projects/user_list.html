@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'web_projects/base.html' %}
 
 {% block title %}Список получателей{% endblock %}
 
@@ -19,8 +19,8 @@
             <td>{{ user.last_name }}</td>
             <td>{{ user.email }}</td>
             <td>
-                <a href="{% url 'user_update' user.pk %}" class="btn btn-warning">Редактировать</a>
-                <a href="{% url 'user_delete' user.pk %}" class="btn btn-danger">Удалить</a>
+                <a href="{% url 'web_projects: user_update' user.pk %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'web_projects: user_delete' user.pk %}" class="btn btn-danger">Удалить</a>
             </td>
         </tr>
         {% endfor %}
