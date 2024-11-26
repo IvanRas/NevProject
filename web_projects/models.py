@@ -5,7 +5,7 @@ from django.db import models
 
 class User(models.Model):
     last_name = models.CharField(max_length=250, verbose_name='Ф.И.О.', help_text='Введите получателя')
-    email = models.CharField(max_length=250, verbose_name='Email ', help_text='Введите Email', unique=True)
+    email = models.EmailField(max_length=250, verbose_name='Email ', help_text='Введите Email', unique=True)
     comment = models.TextField(max_length=250, verbose_name='комментарий', help_text='Введите комментарий')
 
     def __str__(self):

@@ -1,10 +1,10 @@
-{% extends 'web_projects/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Список получателей{% endblock %}
 
 {% block content %}
 <h2>Список получателей</h2>
-<a href="{% url 'user_create' %}" class="btn btn-success">Добавить получателя</a>
+<a href="{% url 'web_projects:user_create' %}" class="btn btn-success">Добавить получателя</a>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -19,8 +19,8 @@
             <td>{{ user.last_name }}</td>
             <td>{{ user.email }}</td>
             <td>
-                <a href="{% url 'web_projects: user_update' user.pk %}" class="btn btn-warning">Редактировать</a>
-                <a href="{% url 'web_projects: user_delete' user.pk %}" class="btn btn-danger">Удалить</a>
+                <a href="{% url 'web_projects:user_update' user.pk %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'web_projects:user_delete' user.pk %}" class="btn btn-danger">Удалить</a>
             </td>
         </tr>
         {% endfor %}
