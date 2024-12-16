@@ -31,7 +31,7 @@ class UserForm(forms.ModelForm):
 
 class MessageForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = Message
         fields = ['topic', 'letter']
 
     def __init__(self, *args, **kwargs):
@@ -44,3 +44,13 @@ class MessageForm(forms.ModelForm):
             'class': 'form-control',  # Добавление CSS-класса для стилизации поля
             'placeholder': 'Введите имя'  # Текст подсказки внутри поля
         })
+
+
+class NewsLetterForm(forms.ModelForm):
+    class Meta:
+        model = NewsLetter
+        fields = ['first_sent_at', 'end_at', 'status', 'message', 'recipients']
+
+    def __init__(self, *args, **kwargs):
+        super(NewsLetterForm, self).__init__(*args, **kwargs)
+        self.fields['message'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите сообщение'})

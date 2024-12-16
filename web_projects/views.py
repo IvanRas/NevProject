@@ -6,9 +6,9 @@ from django.views.generic import ListView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.mail import send_mail
 from django.utils import timezone
-from .forms import UserForm, MessageForm
+from .forms import UserForm, MessageForm, NewsLetterForm
 
-from web_projects.models import NewsLetter, User, Message, Mailing
+from web_projects.models import NewsLetter, User, Message
 
 # Create your views here.
 
@@ -82,6 +82,7 @@ class NewsLetterListView(ListView):
 
 class NewsLetterCreateView(CreateView):
     model = NewsLetter
+    form_class = NewsLetterForm
     fields = ['end_at', 'message', 'recipients']
     template_name = 'newsletter_form.html'
     success_url = reverse_lazy('newsletter_list')
@@ -89,7 +90,7 @@ class NewsLetterCreateView(CreateView):
 
 class NewsLetterUpdateView(UpdateView):
     model = NewsLetter
-    fields = ['end_at', 'message', 'recipients']
+    form_class = NewsLetterForm
     template_name = 'newsletter_form.html'
     success_url = reverse_lazy('newsletter_list')
 
