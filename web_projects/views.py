@@ -6,7 +6,7 @@ from django.views.generic import ListView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.mail import send_mail
 from django.utils import timezone
-
+from .forms import UserForm, MessageForm
 
 from web_projects.models import NewsLetter, User, Message, Mailing
 
@@ -23,6 +23,7 @@ class UserListView(ListView):
 
 class UserCreateView(CreateView):
     model = User
+    form_class = UserForm
     fields = ['last_name', 'email', 'comment']
     template_name = 'user_form.html'
     success_url = reverse_lazy('user_list')
@@ -30,6 +31,7 @@ class UserCreateView(CreateView):
 
 class UserUpdateView(UpdateView):
     model = User
+    form_class = UserForm
     fields = ['last_name', 'comment']
     template_name = 'user_form.html'
     success_url = reverse_lazy('user_list')
@@ -52,14 +54,14 @@ class MessageListView(ListView):
 
 class MessageCreateView(CreateView):
     model = Message
-    fields = ['topic', 'letter']
+    form_class = MessageForm
     template_name = 'message_form.html'
     success_url = reverse_lazy('message_list')
 
 
 class MessageUpdateView(UpdateView):
     model = Message
-    fields = ['topic', 'letter']
+    form_class = MessageForm
     template_name = 'message_form.html'
     success_url = reverse_lazy('message_list')
 
