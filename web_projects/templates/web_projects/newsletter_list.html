@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Список рассылок</h2>
-<a href="{% url 'newsletter_create' %}" class="btn btn-success">Добавить рассылку</a>
+<a class="btn btn-success" href="{% url 'web_projects:newsletter_create' %}">Добавить рассылку</a>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -19,9 +19,9 @@
             <td>{{ mailing.message.subject }}</td>
             <td>{{ mailing.status }}</td>
             <td>
-                <a href="{% url 'web_projects: newsletter_update' newsletter.pk %}" class="btn btn-warning">Редактировать</a>
-                <a href="{% url 'web_projects: send_newsletter' newsletter.pk %}" class="btn btn-info">Отправить</a>
-                <a href="{% url 'web_projects: newsletter_delete' newsletter.pk %}" class="btn btn-danger">Удалить</a>
+                <a href="{% url 'web_projects:newsletter_update' newsletter.pk %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'web_projects:send_newsletter' newsletter.pk %}" class="btn btn-info">Отправить</a>
+                <a href="{% url 'web_projects:newsletter_delete' newsletter.pk %}" class="btn btn-danger">Удалить</a>
             </td>
         </tr>
         {% endfor %}
