@@ -7,6 +7,12 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.core.mail import send_mail
 from django.utils import timezone
 from .forms import UserForm, MessageForm, NewsLetterForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
 
 from web_projects.models import NewsLetter, User, Message
 
@@ -15,26 +21,40 @@ from web_projects.models import NewsLetter, User, Message
 # CRUD для получателей (Recipient)
 
 
+# @method_decorator(cache_page(60 * 2), name='dispatch')
 class UserListView(ListView):
     model = User
     template_name = 'user_list.html'
     context_object_name = 'users'
 
+    def get_queryset(self):
+        queryset = cache.get('user_queryset')
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('user_queryset', queryset, 60 * 2)
+        return queryset
 
-class UserCreateView(CreateView):
+
+class UserCreateView(LoginRequiredMixin, CreateView):
     model = User
     form_class = UserForm
-    fields = ['last_name', 'email', 'comment']
-    template_name = 'user_form.html'
     success_url = reverse_lazy('user_list')
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     form_class = UserForm
-    fields = ['last_name', 'comment']
     template_name = 'user_form.html'
     success_url = reverse_lazy('user_list')
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return UserForm
+        if self.request.user.has_perm("catalog.can_unpublish_product"):
+            return UserForm
+        if self.request.user.has_perm("catalog.remove_any_product"):
+            return UserForm
+        return UserForm
 
 
 class UserDeleteView(DeleteView):
@@ -46,27 +66,27 @@ class UserDeleteView(DeleteView):
 # CRUD для сообщений (Message)
 
 
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin,ListView):
     model = Message
     template_name = 'message_list.html'
     context_object_name = 'messages'
 
 
-class MessageCreateView(CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     template_name = 'message_form.html'
     success_url = reverse_lazy('message_list')
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form_class = MessageForm
     template_name = 'message_form.html'
     success_url = reverse_lazy('message_list')
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = 'message_delete.html'
     success_url = reverse_lazy('message_list')
@@ -74,28 +94,27 @@ class MessageDeleteView(DeleteView):
 # CRUD для рассылок (Mailing)
 
 
-class NewsLetterListView(ListView):
+class NewsLetterListView(LoginRequiredMixin, ListView):
     model = NewsLetter
     template_name = 'newsletter_list.html'
     context_object_name = 'newsletters'
 
 
-class NewsLetterCreateView(CreateView):
-    model = NewsLetter
-    form_class = NewsLetterForm
-    fields = ['end_at', 'message', 'recipients']
-    template_name = 'newsletter_form.html'
-    success_url = reverse_lazy('newsletter_list')
-
-
-class NewsLetterUpdateView(UpdateView):
+class NewsLetterCreateView(LoginRequiredMixin, CreateView):
     model = NewsLetter
     form_class = NewsLetterForm
     template_name = 'newsletter_form.html'
     success_url = reverse_lazy('newsletter_list')
 
 
-class NewsLetterDeleteView(DeleteView):
+class NewsLetterUpdateView(LoginRequiredMixin, UpdateView):
+    model = NewsLetter
+    form_class = NewsLetterForm
+    template_name = 'newsletter_form.html'
+    success_url = reverse_lazy('newsletter_list')
+
+
+class NewsLetterDeleteView(LoginRequiredMixin, DeleteView):
     model = NewsLetter
     template_name = 'newsletter_delete.html'
     success_url = reverse_lazy('newsletter_list')

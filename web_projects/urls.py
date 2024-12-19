@@ -17,7 +17,7 @@ Including another URLconf
 from operator import index
 
 from django.urls import path
-
+from django.views.decorators.cache import cache_page
 from web_projects.apps import WebProjectsConfig
 from web_projects.views import (UserCreateView, HomeView, UserUpdateView, UserDeleteView, UserListView, SendMailingView,
                                 NewsLetterUpdateView, NewsLetterCreateView, NewsLetterDeleteView, NewsLetterListView,

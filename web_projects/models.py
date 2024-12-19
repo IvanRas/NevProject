@@ -7,6 +7,10 @@ class User(models.Model):
     last_name = models.CharField(max_length=250, verbose_name='Ф.И.О.', help_text='Введите получателя')
     email = models.EmailField(max_length=250, verbose_name='Email ', help_text='Введите Email', unique=True)
     comment = models.TextField(max_length=250, verbose_name='комментарий', help_text='Введите комментарий')
+    is_active = models.BooleanField(default=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return f'{self.email}'
@@ -43,9 +47,18 @@ class NewsLetter(models.Model):
     # Сообщение (внешний ключ на модель «Сообщение»).
     recipients = models.ManyToManyField(User)
     # Получатели («многие ко многим», связь с моделью «Получатель»).
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.message.subject} - {self.status}"
+
+    class Meta:
+        verbose_name = 'рассылка'
+        verbose_name_plural = 'рассылки'
+        permissions = [
+            ("can_activ_user", "Can activ user"),
+            ("can_activ_newsletter", "Can activ newsletter"),
+        ]
 
 
 class Mailing(models.Model):
